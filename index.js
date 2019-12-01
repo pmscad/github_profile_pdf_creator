@@ -1,16 +1,27 @@
-const prompt = require("prompt");
+const inquirer = require("inquirer");
+const path = require("path");
 
-prompt.start();
 
-prompt.get(["favColor", "username"], function(err, result) {
-  if (err) {
-    return onErr(err);
+const questions = [
+  {
+    type: "input",
+    name: "github",
+    message: "What is your Github username?"
+  },
+  {
+    type: "list",
+    name: "color",
+    message: "What is favourite color?",
+    choices: ["red", "blue", "green", "pink", "violet", "indigo"]
   }
-  console.log("Command-line input received:");
-  console.log("  Favourite Color: " + result.favColor);
-  console.log("  Username: " + result.username);
-});
+];
 
-// function onErr(err) {
-//     console.log(err);
-//     return 1;
+function writeToFile(fileName, data) {
+  return fs.writeToFile(path.join(process.cwd(), fileName), data);
+}
+
+function init() {
+    inquirer.prompt(questions).then(({github, color}) => {
+        console.log('Searching...')
+    })
+init();

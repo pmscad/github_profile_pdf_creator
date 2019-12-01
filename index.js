@@ -1,5 +1,9 @@
+const fs = require('fs');
 const inquirer = require("inquirer");
 const path = require("path");
+const generateHTML = require('generateHTML');
+const convertFactory = require('electron-html-to');
+
 
 
 const questions = [
@@ -22,6 +26,25 @@ function writeToFile(fileName, data) {
 
 function init() {
     inquirer.prompt(questions).then(({github, color}) => {
-        console.log('Searching...')
+        console.log('Searching...');
+
+        api 
+        .getUser(github)
+        .then(response => api.getTotalStars(github).then(stars => {
+            return generateHTML({
+                stars,
+                color,
+                    response.data
+            });
+        })
+    )
+    .then(html => {
+        const conversion = convertFactory({
+            convertPath: convertFactory.converters.PDF
+
+        })
+    })
+
+        
     })
 init();

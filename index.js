@@ -1,10 +1,10 @@
-const fs = require('fs');
+const fs = require("fs");
 const inquirer = require("inquirer");
 const path = require("path");
-const generateHTML = require('generateHTML');
-const convertFactory = require('electron-html-to');
-
-
+const generateHTML = require("./generateHTML");
+const convertFactory = require("electron-html-to");
+const api = require("./api");
+const open = require("open");
 
 const questions = [
   {
@@ -25,26 +25,34 @@ function writeToFile(fileName, data) {
 }
 
 function init() {
-    inquirer.prompt(questions).then(({github, color}) => {
-        console.log('Searching...');
+  inquirer.prompt(questions).then(({ github, color }) => {
+    console.log("Searching...");
 
-        api 
-        .getUser(github)
-        .then(response => api.getTotalStars(github).then(stars => {
-            return generateHTML({
-                stars,
-                color,
-                    response.data
-            });
+    api
+      .getUser(github)
+      .then(response =>
+        api.getTotalStars(github).then(stars => {
+          return generateHTML({
+            stars,
+            color
+          });
         })
-    )
-    .then(html => {
+      )
+      .then(html => {
         const conversion = convertFactory({
-            convertPath: convertFactory.converters.PDF
-
-        })
-    })
-
-        
-    })
+          convertPath: convertFactory.converters.PDF
+        });
+        conversion({ html }, function(err, result) {
+          if (err) {
+            return console.log(err);
+          }
+          result.stream.pipe(
+            fs.createWriteStream(path.join(__dirname, "VikramCV.pdf"))
+          );
+          conversion.kill();
+        });
+        open(path.join(process.cwd(), "VikramCV.pdf"));
+      });
+  });
+}
 init();
